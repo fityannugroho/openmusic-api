@@ -6,7 +6,8 @@
   "scripts": {
     "start-prod": "set NODE_ENV=production && node ./src/index.js",
     "start-dev": "nodemon ./src/index.js",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "migrate": "node-pg-migrate"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,8 @@
   },
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "node-pg-migrate": "^6.2.2",
+    "pg": "^8.7.3"
   }
 }
