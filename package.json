@@ -1,0 +1,24 @@
+{
+  "name": "openmusic-api",
+  "version": "1.0.0",
+  "description": "API that store free-music playlist to everybody",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fityannugroho/openmusic-api.git"
+  },
+  "keywords": [
+    "api",
+    "music",
+    "playlist"
+  ],
+  "author": "Fityan <fityannugroho@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fityannugroho/openmusic-api/issues"
+  },
+  "homepage": "https://github.com/fityannugroho/openmusic-api#readme"
+}
