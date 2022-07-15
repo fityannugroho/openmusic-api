@@ -4,7 +4,7 @@
   "description": "API that store free-music playlist to everybody",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/fityannugroho/openmusic-api/issues"
   },
-  "homepage": "https://github.com/fityannugroho/openmusic-api#readme"
+  "homepage": "https://github.com/fityannugroho/openmusic-api#readme",
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  }
 }
