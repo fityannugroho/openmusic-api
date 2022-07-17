@@ -25,7 +25,7 @@ exports.up = (pgm) => {
     duration: {
       type: 'integer',
     },
-    albumId: {
+    album_id: {
       type: 'text',
     },
   });
