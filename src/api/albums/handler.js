@@ -72,7 +72,7 @@ class AlbumsHandler {
 
       return h.response({
         status: 'success',
-        message: 'Album was updated.',
+        message: 'Album successfully updated.',
       });
     } catch (error) {
       if (error instanceof ClientError) {
@@ -96,7 +96,7 @@ class AlbumsHandler {
 
       return h.response({
         status: 'success',
-        message: 'Album was deleted.',
+        message: 'Album successfully deleted.',
       });
     } catch (error) {
       if (error instanceof ClientError) {

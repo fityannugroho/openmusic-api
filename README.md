@@ -95,7 +95,7 @@ Use this endpoint to add a new album.
             example: |
               {
                 "status": "fail",
-                "message": "Invalid request body"
+                "message": "<invalid validation message>"
               }
       500:
         body:
@@ -171,7 +171,7 @@ Use this endpoint to edit an album.
             example: |
               {
                 "status": "success",
-                "message": "Album was updated."
+                "message": "Album successfully updated."
               }
       400:
         body:
@@ -179,7 +179,7 @@ Use this endpoint to edit an album.
             example: |
               {
                 "status": "fail",
-                "message": "Invalid request body"
+                "message": "<invalid validation message>"
               }
       404:
         body:
@@ -214,7 +214,7 @@ Use this endpoint to delete an album.
             example: |
               {
                 "status": "success",
-                "message": "Album was deleted."
+                "message": "Album successfully deleted."
               }
       404:
         body:
@@ -273,7 +273,7 @@ Use this endpoint to add a new song.
             example: |
               {
                 "status": "fail",
-                "message": "Invalid request body"
+                "message": "<invalid validation message>"
               }
       500:
         body:
@@ -396,7 +396,7 @@ Use this endpoint to edit a song.
             example: |
               {
                 "status": "success",
-                "message": "Song was updated."
+                "message": "Song successfully updated."
               }
       400:
         body:
@@ -404,7 +404,7 @@ Use this endpoint to edit a song.
             example: |
               {
                 "status": "fail",
-                "message": "Invalid request body"
+                "message": "<invalid validation message>"
               }
       404:
         body:
@@ -439,7 +439,7 @@ Use this endpoint to delete a song.
             example: |
               {
                 "status": "success",
-                "message": "Song was deleted."
+                "message": "Song successfully deleted."
               }
       404:
         body:
