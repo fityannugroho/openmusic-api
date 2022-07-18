@@ -305,11 +305,7 @@ Use this endpoint to get all songs.
                     {
                       "id": "song-Qbax5Oy7L8WKf74l",
                       "title": "Life in Technicolor",
-                      "year": 2008,
-                      "genre": "Indie",
                       "performer": "Coldplay",
-                      "duration": 120,
-                      "albumId": "album-Mk8AnmCp210PwT6B"
                     }
                   ]
                 }

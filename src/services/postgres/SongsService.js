@@ -37,7 +37,11 @@ class SongsService {
    */
   async getSongs() {
     const result = await this._pool.query('SELECT * FROM songs');
-    return result.rows.map(parseSongFromDB);
+    return result.rows.map((song) => ({
+      id: song.id,
+      title: song.title,
+      performer: song.performer,
+    }));
   }
 
   /**
