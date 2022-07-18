@@ -20,23 +20,24 @@ const init = async () => {
   });
 
   // Register the plugins
-  // Albums plugin
-  const albumsService = new AlbumsService();
-  await server.register({
-    plugin: albums,
-    options: {
-      service: albumsService,
-      validator: AlbumsValidator,
+  await server.register([
+    // Albums plugin
+    {
+      plugin: albums,
+      options: {
+        service: new AlbumsService(),
+        validator: AlbumsValidator,
+      },
     },
-  });
-  // Songs plugin
-  await server.register({
-    plugin: songs,
-    options: {
-      service: new SongsService(),
-      validator: SongsValidator,
+    // Songs plugin
+    {
+      plugin: songs,
+      options: {
+        service: new SongsService(),
+        validator: SongsValidator,
+      },
     },
-  });
+  ]);
 
   await server.start();
   console.log('Server running on %s', server.info.uri);
