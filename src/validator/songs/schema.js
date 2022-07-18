@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const SongsPayloadSchema = Joi.object({
+const SongPayloadSchema = Joi.object({
   title: Joi.string().required(),
   year: Joi.number().required().max(9999),
   genre: Joi.string().required(),
@@ -9,9 +9,9 @@ const SongsPayloadSchema = Joi.object({
   albumId: Joi.string(),
 });
 
-const SongsFilterQuerySchema = Joi.object({
+const SongFilterQuerySchema = Joi.object({
   title: Joi.string(),
   performer: Joi.string(),
 });
 
-module.exports = { SongsPayloadSchema, SongsFilterQuerySchema };
+module.exports = { SongPayloadSchema, SongFilterQuerySchema };
