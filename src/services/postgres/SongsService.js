@@ -32,11 +32,17 @@ class SongsService {
   }
 
   /**
-   * Get all songs.
+   * Get songs, optionally filtered by title and performer.
+   * @param {object} filter The filter parameters.
    * @returns {Promise<object[]>} The songs.
    */
-  async getSongs() {
-    const result = await this._pool.query('SELECT * FROM songs');
+  async getSongs(filter = {}) {
+    const { title = '', performer = '' } = filter;
+    const result = await this._pool.query({
+      text: 'SELECT * FROM songs WHERE title ILIKE $1 AND performer ILIKE $2',
+      values: [`%${title}%`, `%${performer}%`],
+    });
+
     return result.rows.map((song) => ({
       id: song.id,
       title: song.title,

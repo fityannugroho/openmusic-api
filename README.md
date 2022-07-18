@@ -285,14 +285,23 @@ Use this endpoint to add a new song.
               }
 ```
 
-#### 2. Get all songs
+#### 2. Get songs
 
-Use this endpoint to get all songs.
+Use this endpoint to get songs, and optionally filter them by `title` and `performer`.
 
 ```raml
 /songs:
   get:
     description: Get all songs.
+    queryParameters:
+      - name: title
+        type: string
+        description: Title of the song.
+        required: false
+      - name: performer
+        type: string
+        description: Performer of the song.
+        required: false
     responses:
       200:
         body:
