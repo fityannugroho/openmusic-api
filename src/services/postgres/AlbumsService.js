@@ -8,6 +8,12 @@ class AlbumsService {
   constructor() {
     this._pool = new Pool();
     this._songsService = new SongsService();
+
+    /**
+     * The table name.
+     * @type {string}
+    */
+    this._tableName = 'albums';
   }
 
   /**
@@ -19,7 +25,7 @@ class AlbumsService {
   async addAlbum({ name, year }) {
     const id = `album-${nanoid(16)}`;
     const result = await this._pool.query({
-      text: 'INSERT INTO albums (id, name, year) VALUES ($1, $2, $3) RETURNING id',
+      text: `INSERT INTO ${this._tableName} (id, name, year) VALUES ($1, $2, $3) RETURNING id`,
       values: [id, name, year],
     });
 
@@ -38,7 +44,7 @@ class AlbumsService {
    */
   async getAlbumById(id) {
     const result = await this._pool.query({
-      text: 'SELECT * FROM albums WHERE id = $1',
+      text: `SELECT * FROM ${this._tableName} WHERE id = $1`,
       values: [id],
     });
 
@@ -59,7 +65,7 @@ class AlbumsService {
    */
   async editAlbumById(id, { name, year }) {
     const result = await this._pool.query({
-      text: 'UPDATE albums SET name = $2, year = $3 WHERE id = $1 RETURNING id',
+      text: `UPDATE ${this._tableName} SET name = $2, year = $3 WHERE id = $1 RETURNING id`,
       values: [id, name, year],
     });
 
@@ -75,7 +81,7 @@ class AlbumsService {
    */
   async deleteAlbumById(id) {
     const result = await this._pool.query({
-      text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
+      text: `DELETE FROM ${this._tableName} WHERE id = $1 RETURNING id`,
       values: [id],
     });
 

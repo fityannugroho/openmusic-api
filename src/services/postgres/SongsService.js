@@ -7,6 +7,12 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 class SongsService {
   constructor() {
     this._pool = new Pool();
+
+    /**
+     * The table name.
+     * @type {string}
+    */
+    this._tableName = 'songs';
   }
 
   /**
@@ -20,7 +26,7 @@ class SongsService {
   }) {
     const id = `song-${nanoid(16)}`;
     const result = await this._pool.query({
-      text: 'INSERT INTO songs (id, title, year, genre, performer, duration, album_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+      text: `INSERT INTO ${this._tableName} (id, title, year, genre, performer, duration, album_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
       values: [id, title, year, genre, performer, duration, albumId],
     });
 
@@ -39,7 +45,7 @@ class SongsService {
   async getSongs(filter = {}) {
     const { title = '', performer = '' } = filter;
     const result = await this._pool.query({
-      text: 'SELECT * FROM songs WHERE title ILIKE $1 AND performer ILIKE $2',
+      text: `SELECT * FROM ${this._tableName} WHERE title ILIKE $1 AND performer ILIKE $2`,
       values: [`%${title}%`, `%${performer}%`],
     });
 
@@ -53,7 +59,7 @@ class SongsService {
    */
   async getSongsByAlbumId(albumId) {
     const result = await this._pool.query({
-      text: 'SELECT * FROM songs WHERE album_id = $1',
+      text: `SELECT * FROM ${this._tableName} WHERE album_id = $1`,
       values: [albumId],
     });
 
@@ -68,7 +74,7 @@ class SongsService {
    */
   async getSongById(id) {
     const result = await this._pool.query({
-      text: 'SELECT * FROM songs WHERE id = $1',
+      text: `SELECT * FROM ${this._tableName} WHERE id = $1`,
       values: [id],
     });
 
@@ -89,7 +95,7 @@ class SongsService {
     title, year, genre, performer, duration = 0, albumId = '',
   }) {
     const result = await this._pool.query({
-      text: 'UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6 WHERE id = $7 RETURNING id',
+      text: `UPDATE ${this._tableName} SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6 WHERE id = $7 RETURNING id`,
       values: [title, year, genre, performer, duration, albumId, id],
     });
 
@@ -105,7 +111,7 @@ class SongsService {
    */
   async deleteSongById(id) {
     const result = await this._pool.query({
-      text: 'DELETE FROM songs WHERE id = $1 RETURNING id',
+      text: `DELETE FROM ${this._tableName} WHERE id = $1 RETURNING id`,
       values: [id],
     });
 
