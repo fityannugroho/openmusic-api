@@ -77,8 +77,8 @@ class SongsService {
       values: [title, year, genre, performer, duration, albumId, id],
     });
 
-    if (result.rows[0].id !== id) {
-      throw new InvariantError('Failed to edit song');
+    if (!result.rowCount) {
+      throw new NotFoundError('Song not found.');
     }
   }
 
