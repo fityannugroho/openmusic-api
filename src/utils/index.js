@@ -1,11 +1,12 @@
 /* eslint-disable camelcase */
 
-const parseSongFromDB = ({
-  album_id,
-  ...others
-}) => ({
+const parseSongFromDB = ({ album_id, ...others }) => ({
   ...others,
   albumId: album_id,
 });
 
-module.exports = { parseSongFromDB };
+const getSongSummary = ({ id, title, performer }) => ({
+  id, title, performer,
+});
+
+module.exports = { parseSongFromDB, getSongSummary };

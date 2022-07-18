@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
-const { parseSongFromDB } = require('../../utils');
+const { parseSongFromDB, getSongSummary } = require('../../utils');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class SongsService {
@@ -43,11 +43,7 @@ class SongsService {
       values: [`%${title}%`, `%${performer}%`],
     });
 
-    return result.rows.map((song) => ({
-      id: song.id,
-      title: song.title,
-      performer: song.performer,
-    }));
+    return result.rows.map(getSongSummary);
   }
 
   /**
