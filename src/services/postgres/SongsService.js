@@ -47,6 +47,20 @@ class SongsService {
   }
 
   /**
+   * Get all songs from an album.
+   * @param {string} albumId The album's id.
+   * @returns {Promise<object[]>} The songs.
+   */
+  async getSongsByAlbumId(albumId) {
+    const result = await this._pool.query({
+      text: 'SELECT * FROM songs WHERE album_id = $1',
+      values: [albumId],
+    });
+
+    return result.rows.map(getSongSummary);
+  }
+
+  /**
    * Get a song by id.
    * @param {string} id The song's id.
    * @returns {Promise<object>} The song.

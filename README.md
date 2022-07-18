@@ -126,7 +126,18 @@ Use this endpoint to get an album.
                   "album": {
                     "id": "album-Mk8AnmCp210PwT6B",
                     "name": "Viva la Vida",
-                    "year": 2008
+                    "year": 2008,
+                    "songs": [
+                      {
+                        "id": "song-Qbax5Oy7L8WKf74l",
+                        "title": "Life in Technicolor",
+                        "year": 2008,
+                        "performer": "Coldplay",
+                        "genre": "Indie",
+                        "duration": 120,
+                        "albumId": "album-Mk8AnmCp210PwT6B"
+                      }
+                    ]
                   }
                 }
               }
@@ -147,6 +158,8 @@ Use this endpoint to get an album.
                 "message": "Something went wrong in our server."
               }
 ```
+
+> If there are **no songs** in the album, the `songs` property will be not exist in the response body (`undefined`).
 
 #### 3. Edit an album
 
