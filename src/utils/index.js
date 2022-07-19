@@ -5,8 +5,4 @@ const parseSongFromDB = ({ album_id, ...others }) => ({
   albumId: album_id,
 });
 
-const getSongSummary = ({ id, title, performer }) => ({
-  id, title, performer,
-});
-
-module.exports = { parseSongFromDB, getSongSummary };
+module.exports = { parseSongFromDB };

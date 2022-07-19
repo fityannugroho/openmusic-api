@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
-const { parseSongFromDB, getSongSummary } = require('../../utils');
+const { parseSongFromDB } = require('../../utils');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class SongsService {
@@ -45,11 +45,11 @@ class SongsService {
   async getSongs(filter = {}) {
     const { title = '', performer = '' } = filter;
     const result = await this._pool.query({
-      text: `SELECT * FROM ${this._tableName} WHERE title ILIKE $1 AND performer ILIKE $2`,
+      text: `SELECT id, title, performer FROM ${this._tableName} WHERE title ILIKE $1 AND performer ILIKE $2`,
       values: [`%${title}%`, `%${performer}%`],
     });
 
-    return result.rows.map(getSongSummary);
+    return result.rows;
   }
 
   /**
@@ -59,11 +59,11 @@ class SongsService {
    */
   async getSongsByAlbumId(albumId) {
     const result = await this._pool.query({
-      text: `SELECT * FROM ${this._tableName} WHERE album_id = $1`,
+      text: `SELECT id, title, performer FROM ${this._tableName} WHERE album_id = $1`,
       values: [albumId],
     });
 
-    return result.rows.map(getSongSummary);
+    return result.rows;
   }
 
   /**
