@@ -1,5 +1,3 @@
-const ClientError = require('../../exceptions/ClientError');
-
 class SongsHandler {
   constructor(service, validator) {
     this._service = service;
@@ -14,140 +12,70 @@ class SongsHandler {
   }
 
   async postSongHandler(request, h) {
-    try {
-      this._validator.validateSongPayload(request.payload);
+    this._validator.validateSongPayload(request.payload);
 
-      const {
-        title, year, genre, performer, duration, albumId,
-      } = request.payload;
+    const {
+      title, year, genre, performer, duration, albumId,
+    } = request.payload;
 
-      const songId = await this._service.addSong({
-        title, year, genre, performer, duration, albumId,
-      });
+    const songId = await this._service.addSong({
+      title, year, genre, performer, duration, albumId,
+    });
 
-      return h.response({
-        status: 'success',
-        data: { songId },
-      }).code(201);
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return h.response({
-          status: 'fail',
-          message: error.message,
-        }).code(error.statusCode);
-      }
-
-      return h.response({
-        status: 'error',
-        message: 'Something went wrong in our server.',
-      }).code(500);
-    }
+    return h.response({
+      status: 'success',
+      data: { songId },
+    }).code(201);
   }
 
   async getSongsHandler(request, h) {
-    try {
-      this._validator.validateSongFilterQuery(request.query);
+    this._validator.validateSongFilterQuery(request.query);
 
-      const { title, performer } = request.query;
-      const songs = await this._service.getSongs({ title, performer });
+    const { title, performer } = request.query;
+    const songs = await this._service.getSongs({ title, performer });
 
-      return h.response({
-        status: 'success',
-        data: { songs },
-      });
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return h.response({
-          status: 'fail',
-          message: error.message,
-        }).code(error.statusCode);
-      }
-
-      return h.response({
-        status: 'error',
-        message: 'Something went wrong in our server.',
-      }).code(500);
-    }
+    return h.response({
+      status: 'success',
+      data: { songs },
+    });
   }
 
   async getSongByIdHandler(request, h) {
-    try {
-      const { id } = request.params;
-      const song = await this._service.getSongById(id);
+    const { id } = request.params;
+    const song = await this._service.getSongById(id);
 
-      return h.response({
-        status: 'success',
-        data: { song },
-      });
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return h.response({
-          status: 'fail',
-          message: error.message,
-        }).code(error.statusCode);
-      }
-
-      return h.response({
-        status: 'error',
-        message: 'Something went wrong in our server.',
-      }).code(500);
-    }
+    return h.response({
+      status: 'success',
+      data: { song },
+    });
   }
 
   async putSongByIdHandler(request, h) {
-    try {
-      this._validator.validateSongPayload(request.payload);
+    this._validator.validateSongPayload(request.payload);
 
-      const { id } = request.params;
-      const {
-        title, year, genre, performer, duration, albumId,
-      } = request.payload;
+    const { id } = request.params;
+    const {
+      title, year, genre, performer, duration, albumId,
+    } = request.payload;
 
-      await this._service.editSongById(id, {
-        title, year, genre, performer, duration, albumId,
-      });
+    await this._service.editSongById(id, {
+      title, year, genre, performer, duration, albumId,
+    });
 
-      return h.response({
-        status: 'success',
-        message: 'Song updated successfully.',
-      });
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return h.response({
-          status: 'fail',
-          message: error.message,
-        }).code(error.statusCode);
-      }
-
-      return h.response({
-        status: 'error',
-        message: 'Something went wrong in our server.',
-      }).code(500);
-    }
+    return h.response({
+      status: 'success',
+      message: 'Song updated successfully.',
+    });
   }
 
   async deleteSongByIdHandler(request, h) {
-    try {
-      const { id } = request.params;
-      await this._service.deleteSongById(id);
+    const { id } = request.params;
+    await this._service.deleteSongById(id);
 
-      return h.response({
-        status: 'success',
-        message: 'Song deleted successfully.',
-      });
-    } catch (error) {
-      if (error instanceof ClientError) {
-        return h.response({
-          status: 'fail',
-          message: error.message,
-        }).code(error.statusCode);
-      }
-
-      return h.response({
-        status: 'error',
-        message: 'Something went wrong in our server.',
-      }).code(500);
-    }
+    return h.response({
+      status: 'success',
+      message: 'Song deleted successfully.',
+    });
   }
 }
 

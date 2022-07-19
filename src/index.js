@@ -3,6 +3,7 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const albums = require('./api/albums');
 const songs = require('./api/songs');
+const ClientError = require('./exceptions/ClientError');
 const AlbumsService = require('./services/postgres/AlbumsService');
 const SongsService = require('./services/postgres/SongsService');
 const AlbumsValidator = require('./validator/albums');
@@ -38,6 +39,29 @@ const init = async () => {
       },
     },
   ]);
+
+  server.ext('onPreResponse', (request, h) => {
+    const { response } = request;
+
+    // Handle the client error
+    if (response instanceof ClientError) {
+      return h.response({
+        status: 'fail',
+        message: response.message,
+      }).code(response.statusCode);
+    }
+
+    // Handle the server error
+    if (response.isServer) {
+      console.error(`${response.name}: ${response.message}\n${response.stack}\n`);
+      return h.response({
+        status: 'error',
+        message: 'Something went wrong in our server.',
+      }).code(500);
+    }
+
+    return h.continue;
+  });
 
   await server.start();
   console.log('Server running on %s', server.info.uri);
