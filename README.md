@@ -6,6 +6,30 @@ API that store free-music playlist to everybody.
 
 This API will store data that has attributes like the following:
 
+### User
+
+The user has the following attributes:
+
+```json
+{
+  "id": "string",
+  "username": "string",
+  "password": "string",
+  "fullname": "string",
+}
+```
+
+This is an example of the user:
+
+```json
+{
+  "id": "user-RpSB2ThuGNLvYkdx",
+  "username": "johndoe",
+  "password": "secretpassword",
+  "fullname": "John Doe"
+}
+```
+
 ### Album
 
 The album has the following attributes:
@@ -55,6 +79,28 @@ This is an example of the song:
   "genre": "Indie",
   "duration": 120,
   "albumId": "album-Mk8AnmCp210PwT6B"
+}
+```
+
+### Playlist
+
+The playlist has the following attributes:
+
+```json
+{
+  "id": "string",
+  "name": "string",
+  "owner": "string",
+}
+```
+
+This is an example of the playlist:
+
+```json
+{
+  "id": "playlist-Xm0SsnNJDP4p56kt",
+  "name": "Viva la Vida",
+  "owner": "user-RpSB2ThuGNLvYkdx"
 }
 ```
 
