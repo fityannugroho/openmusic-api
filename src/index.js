@@ -20,13 +20,16 @@ const init = async () => {
     },
   });
 
+  const songsService = new SongsService();
+  const albumsService = new AlbumsService(songsService);
+
   // Register the plugins
   await server.register([
     // Albums plugin
     {
       plugin: albums,
       options: {
-        service: new AlbumsService(),
+        service: albumsService,
         validator: AlbumsValidator,
       },
     },
@@ -34,7 +37,7 @@ const init = async () => {
     {
       plugin: songs,
       options: {
-        service: new SongsService(),
+        service: songsService,
         validator: SongsValidator,
       },
     },

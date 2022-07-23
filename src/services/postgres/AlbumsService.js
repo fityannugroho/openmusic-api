@@ -2,12 +2,11 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const SongsService = require('./SongsService');
 
 class AlbumsService {
-  constructor() {
+  constructor(songsService) {
     this._pool = new Pool();
-    this._songsService = new SongsService();
+    this._songsService = songsService;
 
     /**
      * The table name.
