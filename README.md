@@ -106,6 +106,197 @@ This is an example of the playlist:
 
 ## API Endpoint
 
+### User
+
+#### 1. Create a user
+
+Use this endpoint to create a new user.
+
+```raml
+/users:
+  post:
+    description: Create a new user.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "username": "johndoe",
+              "password": "secretpassword",
+              "fullname": "John Doe"
+            }
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "data": {
+                  "userId": "user-RpSB2ThuGNLvYkdx"
+                }
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+### Authentication
+
+To authenticate a user, you need to send a username and password. The username and password will be checked against the database. If the username and password are correct, some **tokens** will be returned.
+
+- The **`accessToken`** will be used to access the restricted endpoints.
+- The **`refreshToken`** will be used to refresh the `accessToken` if it expires.
+
+Both tokens use **JWT format** which contains the `userId` in the payload.
+
+> See [JWT](https://jwt.io/) for more information.
+
+#### 1. Login
+
+Use this endpoint to login.
+
+```raml
+/authentications:
+  post:
+    description: User login.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "username": "johndoe",
+              "password": "secretpassword"
+            }
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "data": {
+                  "accessToken": "<token>",
+                  "refreshToken": "<token>",
+                }
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 2. Update the access token
+
+Use this endpoint to update the user's access token.
+
+```raml
+/authentications:
+  put:
+    description: Update the access token.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "refreshToken": "<token>"
+            }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "data": {
+                  "accessToken": "<token>"
+                }
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 3. Logout
+
+Use this endpoint to logout.
+
+```raml
+/authentications:
+  delete:
+    description: User logout.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "refreshToken": "<token>"
+            }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "User successfully logged out."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
 ### Album
 
 #### 1. Add an album
