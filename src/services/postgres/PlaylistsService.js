@@ -39,6 +39,21 @@ class PlaylistsService {
   }
 
   /**
+   * Get all user playlists.
+   * @param {string} userId The user id.
+   * @returns {Promise<object[]>} The songs.
+   */
+  async getPlaylists(userId) {
+    const result = await this._pool.query({
+      text: `SELECT playlists.id, playlists.name, users.username FROM ${this._tableName}
+        INNER JOIN users ON users.id = playlists.owner WHERE playlists.owner = $1`,
+      values: [userId],
+    });
+
+    return result.rows;
+  }
+
+  /**
    * Check if user is owner of the playlist.
    * @param {string} id The playlist id.
    * @param {string} userId The id of user who is trying to access the playlist.
