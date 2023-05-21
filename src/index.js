@@ -16,6 +16,9 @@ const AuthService = require('./services/postgres/AuthService');
 const auth = require('./api/auth');
 const AuthValidator = require('./validator/auth');
 const TokenManager = require('./tokenize/TokenManager');
+const playlists = require('./api/playlists');
+const PlaylistsService = require('./services/postgres/PlaylistsService');
+const PlaylistsValidator = require('./validator/playlists');
 
 const init = async () => {
   const server = Hapi.server({
@@ -56,6 +59,7 @@ const init = async () => {
   const albumsService = new AlbumsService(songsService);
   const usersService = new UsersService();
   const authService = new AuthService();
+  const playlistsService = new PlaylistsService();
 
   // Register the plugins
   await server.register([
@@ -91,6 +95,14 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthValidator,
+      },
+    },
+    // Playlists plugin
+    {
+      plugin: playlists,
+      options: {
+        service: playlistsService,
+        validator: PlaylistsValidator,
       },
     },
   ]);
