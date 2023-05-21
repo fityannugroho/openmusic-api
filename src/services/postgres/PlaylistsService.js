@@ -70,6 +70,27 @@ class PlaylistsService {
   }
 
   /**
+   * Add a song into the playlist.
+   * @param {string} songId The id of song.
+   * @param {string} playlistId The id of playlist.
+   * @returns {Promise<string>} The relation id.
+   */
+  async addSongToPlaylist(songId, playlistId) {
+    const id = nanoid(16);
+
+    const result = await this._pool.query({
+      text: 'INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id',
+      values: [id, playlistId, songId],
+    });
+
+    if (!result.rowCount) {
+      throw new InvariantError('Failed to add song to the playlist');
+    }
+
+    return id;
+  }
+
+  /**
    * Check if user is owner of the playlist.
    * @param {string} id The playlist id.
    * @param {string} userId The id of user who is trying to access the playlist.
