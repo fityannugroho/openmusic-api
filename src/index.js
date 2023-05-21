@@ -28,6 +28,30 @@ const init = async () => {
     },
   });
 
+  // Register external plugins
+  await server.register([
+    {
+      plugin: Jwt,
+    },
+  ]);
+
+  // Define jwt authentication strategy.
+  server.auth.strategy('openmusic_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
+  });
+
   const songsService = new SongsService();
   const albumsService = new AlbumsService(songsService);
   const usersService = new UsersService();
@@ -70,30 +94,6 @@ const init = async () => {
       },
     },
   ]);
-
-  // Register external plugins
-  await server.register([
-    {
-      plugin: Jwt,
-    },
-  ]);
-
-  // Define jwt authentication strategy.
-  server.auth.strategy('openmusic_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
-    verify: {
-      aud: false,
-      iss: false,
-      sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
-    },
-    validate: (artifacts) => ({
-      isValid: true,
-      credentials: {
-        id: artifacts.decoded.payload.id,
-      },
-    }),
-  });
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
