@@ -122,6 +122,22 @@ class PlaylistsService {
   }
 
   /**
+   * Remove a song from playlist.
+   * @param {string} songId The id of song to remove.
+   * @param {string} playlistId The id of playlist.
+   */
+  async removeSongFromPlaylist(songId, playlistId) {
+    const result = await this._pool.query({
+      text: 'DELETE FROM playlist_songs WHERE song_id = $1 AND playlist_id = $2 RETURNING id',
+      values: [songId, playlistId],
+    });
+
+    if (!result.rowCount) {
+      throw new InvariantError('Failed to remove song from the playlist');
+    }
+  }
+
+  /**
    * Check if user is owner of the playlist.
    * @param {string} id The playlist id.
    * @param {string} userId The id of user who is trying to access the playlist.
