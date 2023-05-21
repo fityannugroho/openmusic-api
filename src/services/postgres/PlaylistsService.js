@@ -54,6 +54,22 @@ class PlaylistsService {
   }
 
   /**
+   * Delete a playlist.
+   * @param {string} playlistId The playlist id.
+   * @throws {NotFoundError} If playlist not found.
+   */
+  async deletePlaylist(playlistId) {
+    const result = await this._pool.query({
+      text: `DELETE FROM ${this._tableName} WHERE id = $1 RETURNING id`,
+      values: [playlistId],
+    });
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Playlist not found');
+    }
+  }
+
+  /**
    * Check if user is owner of the playlist.
    * @param {string} id The playlist id.
    * @param {string} userId The id of user who is trying to access the playlist.
