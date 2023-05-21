@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
+const AuthenticationError = require('../../exceptions/AuthenticationError');
 
 class UsersService {
   constructor() {
@@ -48,12 +49,38 @@ class UsersService {
     const id = `user-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await this._pool.query({
-      text: 'INSERT INTO users VALUES ($1, $2, $3, $4) RETURNING id',
+      text: `INSERT INTO ${this._tableName} VALUES ($1, $2, $3, $4) RETURNING id`,
       values: [id, username, hashedPassword, fullname],
     });
 
     if (!result.rowCount) {
       throw new InvariantError('Failed to add new user');
+    }
+
+    return id;
+  }
+
+  /**
+   * Verify the user credentials.
+   * @param {string} username The username.
+   * @param {string} password The password.
+   * @throws {AuthenticationError} If user credentials are invalid.
+   */
+  async verifyUserCredential(username, password) {
+    const result = await this._pool.query({
+      text: `SELECT id, username, password FROM ${this._tableName} WHERE username = $1`,
+      values: [username],
+    });
+
+    if (!result.rowCount) {
+      throw new AuthenticationError('Wrong credentials');
+    }
+
+    const { id, password: hashedPassword } = result.rows[0];
+    const isValid = await bcrypt.compare(password, hashedPassword);
+
+    if (!isValid) {
+      throw new AuthenticationError('Wrong credentials');
     }
 
     return id;
