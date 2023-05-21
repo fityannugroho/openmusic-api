@@ -35,6 +35,9 @@ API that store free-music playlist to everybody.
     - [4. Add a song to playlist](#4-add-a-song-to-playlist)
     - [5. Get songs from playlist](#5-get-songs-from-playlist)
     - [6. Remove a song from playlist](#6-remove-a-song-from-playlist)
+  - [Collaboration](#collaboration)
+    - [1. Add a collaborator](#1-add-a-collaborator)
+    - [2. Delete collaborators](#2-delete-collaborators)
 
 ## Data
 
@@ -1057,6 +1060,124 @@ Use this endpoint to remove a song from playlist.
               {
                 "status": "fail",
                 "message": "Playlist not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+### Collaboration
+
+#### 1. Add a collaborator
+
+Use this endpoint to add a collaborator to a playlist. The collaborator must be a valid user.
+
+```raml
+/collaborations:
+  post:
+    description: Add a collaborator to a playlist.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "playlistId": "playlist-8b8b8b8b8b8b8b8b",
+              "userId": "user-8b8b8b8b8b8b8b8b"
+            }
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Collaborator successfully added to playlist."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Unauthorized"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Playlist or user not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 2. Delete collaborators
+
+```raml
+/collaborations:
+  delete:
+    description: Delete a collaborator from a playlist.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "playlistId": "playlist-8b8b8b8b8b8b8b8b",
+              "userId": "user-8b8b8b8b8b8b8b8b"
+            }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Collaborator successfully deleted from playlist."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Unauthorized"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Playlist or user not found."
               }
       500:
         body:
