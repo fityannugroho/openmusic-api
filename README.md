@@ -137,6 +137,14 @@ This is an example of the playlist:
 }
 ```
 
+### Data Relations
+
+The following is the relations between the data:
+
+![ERD](https://dicoding-web-img.sgp1.cdn.digitaloceanspaces.com/original/academy/dos:3e4c9267e6548046c5d7b1289690b15920220921225650.jpeg)
+
+The table shown with a dotted line is a table that used for next features in v3.0.0.
+
 ## API Endpoint
 
 ### User
