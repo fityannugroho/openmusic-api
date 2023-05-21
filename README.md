@@ -9,6 +9,7 @@ API that store free-music playlist to everybody.
   - [Album](#album)
   - [Song](#song)
   - [Playlist](#playlist)
+  - [Data Relations](#data-relations)
 - [API Endpoint](#api-endpoint)
   - [User](#user-1)
     - [1. Create a user](#1-create-a-user)
@@ -968,7 +969,7 @@ Use this endpoint to add a song to a playlist. The songId inserted/deleted to/fr
             example: |
               {
                 "status": "success",
-                "data": [
+                "data": {
                   "playlist": {
                     "id": "playlist-8b8b8b8b8b8b8b8b",
                     "name": "Lagu Indie Hits Indonesia",
@@ -979,7 +980,7 @@ Use this endpoint to add a song to a playlist. The songId inserted/deleted to/fr
                         "title": "Life in Technicolor",
                         "performer": "Coldplay"
                       }
-                    ]
+                    }
                   },
                 ]
               }

@@ -54,6 +54,21 @@ class PlaylistsService {
   }
 
   /**
+   * Get a playlist.
+   * @param {string} id The playlist id.
+   * @returns {Promise<object[]>} The playlist.
+   */
+  async getPlaylist(id) {
+    const result = await this._pool.query({
+      text: `SELECT playlists.id, playlists.name, users.username FROM ${this._tableName}
+        INNER JOIN users ON users.id = playlists.owner WHERE playlists.id = $1`,
+      values: [id],
+    });
+
+    return result.rows[0];
+  }
+
+  /**
    * Delete a playlist.
    * @param {string} playlistId The playlist id.
    * @throws {NotFoundError} If playlist not found.
@@ -88,6 +103,22 @@ class PlaylistsService {
     }
 
     return id;
+  }
+
+  /**
+   * Get all songs in a playlist.
+   * @param {string} playlistId The id of playlist.
+   * @returns {Promise<object[]>} Array of songs.
+   */
+  async getSongsFromPlaylist(playlistId) {
+    const result = await this._pool.query({
+      text: `SELECT songs.id, songs.title, songs.performer FROM songs
+        INNER JOIN playlist_songs ON playlist_songs.song_id = songs.id
+        WHERE playlist_songs.playlist_id = $1`,
+      values: [playlistId],
+    });
+
+    return result.rows;
   }
 
   /**
