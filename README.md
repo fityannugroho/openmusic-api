@@ -9,6 +9,7 @@ API that store free-music playlist to everybody.
   - [Album](#album)
   - [Song](#song)
   - [Playlist](#playlist)
+  - [Collaboration](#collaboration)
   - [Data Relations](#data-relations)
 - [API Endpoint](#api-endpoint)
   - [User](#user-1)
@@ -35,7 +36,7 @@ API that store free-music playlist to everybody.
     - [4. Add a song to playlist](#4-add-a-song-to-playlist)
     - [5. Get songs from playlist](#5-get-songs-from-playlist)
     - [6. Remove a song from playlist](#6-remove-a-song-from-playlist)
-  - [Collaboration](#collaboration)
+  - [Collaboration](#collaboration-1)
     - [1. Add a collaborator](#1-add-a-collaborator)
     - [2. Delete collaborators](#2-delete-collaborators)
 
@@ -138,6 +139,18 @@ This is an example of the playlist:
   "id": "playlist-Xm0SsnNJDP4p56kt",
   "name": "Viva la Vida",
   "owner": "user-RpSB2ThuGNLvYkdx"
+}
+```
+
+### Collaboration
+
+The collaboration has the following attributes:
+
+```json
+{
+  "id": "string",
+  "playlistId": "string",
+  "userId": "string"
 }
 ```
 
@@ -1072,6 +1085,8 @@ Use this endpoint to remove a song from playlist.
 ```
 
 ### Collaboration
+
+Manage who can see and modify the songs in your playlist.
 
 #### 1. Add a collaborator
 
