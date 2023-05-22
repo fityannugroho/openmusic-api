@@ -1,7 +1,3 @@
-/* eslint-disable camelcase */
-
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
   pgm.sql("INSERT INTO albums VALUES ('old_songs', 'old_songs', 2023)");
 

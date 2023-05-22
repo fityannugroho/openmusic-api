@@ -38,7 +38,7 @@ class AlbumsService {
   /**
    * Get an album by id.
    * @param {string} id The album's id.
-   * @returns {Promise<object>} The album.
+   * @returns {Promise<object>} The album with songs.
    * @throws {NotFoundError} if album not found.
    */
   async getAlbumById(id) {
@@ -53,7 +53,8 @@ class AlbumsService {
 
     const album = result.rows[0];
     const songs = await this._songsService.getSongsByAlbumId(id);
-    return (songs.length) ? { ...album, songs } : album;
+
+    return { ...album, songs };
   }
 
   /**
