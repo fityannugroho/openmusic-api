@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class UsersService {
   constructor() {
@@ -58,6 +59,25 @@ class UsersService {
     }
 
     return id;
+  }
+
+  /**
+   * Get user by id.
+   * @param {string} id The user id.
+   * @returns {Promise<object>} The user.
+   * @throws {NotFoundError} If user not found.
+   */
+  async getUser(id) {
+    const result = await this._pool.query({
+      text: `SELECT id, username, fullname FROM ${this._tableName} WHERE id = $1`,
+      values: [id],
+    });
+
+    if (!result.rowCount) {
+      throw new NotFoundError('User not found');
+    }
+
+    return result.rows[0];
   }
 
   /**
