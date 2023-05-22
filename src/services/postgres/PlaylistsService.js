@@ -5,6 +5,11 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
 
 class PlaylistsService {
+  actions = Object.freeze({
+    ADD: 'add',
+    REMOVE: 'delete',
+  });
+
   constructor(collaborationsService) {
     /**
      * @type {Pool}
@@ -183,6 +188,31 @@ class PlaylistsService {
         throw error;
       }
     }
+  }
+
+  /**
+   * Record new activity from a playlist.
+   * @param {string} playlistId The playlist id.
+   * @param {object} activity The activity.
+   * @param {string} activity.songId The id of related song.
+   * @param {string} activity.userId The id of user who make this action.
+   * @param {string} activity.action The action.
+   * @returns {Promise<string>} The activity id.
+   */
+  async recordPlaylistActivity(playlistId, { songId = null, userId = null, action }) {
+    const id = `plyact-${nanoid(16)}`;
+
+    const result = await this._pool.query({
+      text: `INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action)
+        VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+      values: [id, playlistId, songId, userId, action],
+    });
+
+    if (!result.rowCount) {
+      throw new InvariantError('Failed to record playlist activity');
+    }
+
+    return id;
   }
 }
 

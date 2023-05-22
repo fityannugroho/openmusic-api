@@ -64,6 +64,11 @@ class PlaylistsHandler {
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._songsService.getSongById(songId);
     await this._service.addSongToPlaylist(songId, playlistId);
+    await this._service.recordPlaylistActivity(playlistId, {
+      songId,
+      userId: credentialId,
+      action: this._service.actions.ADD,
+    });
 
     return h.response({
       status: 'success',
@@ -97,6 +102,11 @@ class PlaylistsHandler {
 
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._service.removeSongFromPlaylist(songId, playlistId);
+    await this._service.recordPlaylistActivity(playlistId, {
+      songId,
+      userId: credentialId,
+      action: this._service.actions.REMOVE,
+    });
 
     return {
       status: 'success',
