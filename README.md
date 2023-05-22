@@ -453,8 +453,6 @@ Use this endpoint to get an album.
               }
 ```
 
-> If there are **no songs** in the album, the `songs` property will be not exist in the response body (`undefined`).
-
 #### 3. Edit an album
 
 Use this endpoint to edit an album.
