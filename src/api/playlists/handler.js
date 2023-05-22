@@ -11,6 +11,7 @@ class PlaylistsHandler {
     this.postSongToPlaylistHandler = this.postSongToPlaylistHandler.bind(this);
     this.getSongsFromPlaylistHandler = this.getSongsFromPlaylistHandler.bind(this);
     this.removeSongFromPlaylistHandler = this.removeSongFromPlaylistHandler.bind(this);
+    this.getPlaylistActivitiesHandler = this.getPlaylistActivitiesHandler.bind(this);
   }
 
   async postPlaylistHandler(request, h) {
@@ -112,6 +113,22 @@ class PlaylistsHandler {
       status: 'success',
       message: 'Song successfully removed from playlist',
     };
+  }
+
+  async getPlaylistActivitiesHandler(request, h) {
+    const { playlistId } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._service.verifyPlaylistAccess(playlistId, credentialId);
+    const activities = await this._service.getPlaylistActivities(playlistId);
+
+    return h.response({
+      status: 'success',
+      data: {
+        playlistId,
+        activities,
+      },
+    });
   }
 }
 
