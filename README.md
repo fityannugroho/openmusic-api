@@ -36,6 +36,7 @@ API that store free-music playlist to everybody.
     - [4. Add a song to playlist](#4-add-a-song-to-playlist)
     - [5. Get songs from playlist](#5-get-songs-from-playlist)
     - [6. Remove a song from playlist](#6-remove-a-song-from-playlist)
+    - [7. Get playlist activities](#7-get-playlist-activities)
   - [Collaboration](#collaboration-1)
     - [1. Add a collaborator](#1-add-a-collaborator)
     - [2. Remove a collaborator](#2-remove-a-collaborator)
@@ -159,8 +160,6 @@ The collaboration has the following attributes:
 The following is the relations between the data:
 
 ![ERD](https://dicoding-web-img.sgp1.cdn.digitaloceanspaces.com/original/academy/dos:3e4c9267e6548046c5d7b1289690b15920220921225650.jpeg)
-
-The table shown with a dotted line is a table that used for next features in v3.0.0.
 
 ## API Endpoint
 
@@ -1057,6 +1056,60 @@ Use this endpoint to remove a song from playlist.
               {
                 "status": "fail",
                 "message": "<invalid validation message>"
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Unauthorized"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Playlist not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 7. Get playlist activities
+
+Use this endpoint to get all activities in a playlist.
+
+```raml
+/playlists/{playlistId}/activities:
+  get:
+    description: Get all activities in a playlist.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "data": {
+                  "playlistId": "playlist-8b8b8b8b8b8b8b8b",
+                  "activities": [
+                    {
+                      "id": "activity-8b8b8b8b8b8b8b8b",
+                      "username": "dicoding",
+                      "songTitle": "Life in Technicolor",
+                      "timestamp": "2021-08-08T07:17:01.000Z",
+                      "action": "add"
+                    }
+                  ]
+                }
               }
       401:
         body:
