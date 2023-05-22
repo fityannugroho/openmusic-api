@@ -22,7 +22,7 @@ class SongsService {
    * @throws {InvariantError} if there are invalid song's attributes.
    */
   async addSong({
-    title, year, genre, performer, duration = 0, albumId = '',
+    title, year, genre, performer, duration = 0, albumId = null,
   }) {
     const id = `song-${nanoid(16)}`;
     const result = await this._pool.query({
@@ -92,7 +92,7 @@ class SongsService {
    * @throws {NotFoundError} if song not found.
    */
   async editSongById(id, {
-    title, year, genre, performer, duration = 0, albumId = '',
+    title, year, genre, performer, duration = 0, albumId = null,
   }) {
     const result = await this._pool.query({
       text: `UPDATE ${this._tableName} SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6 WHERE id = $7 RETURNING id`,
