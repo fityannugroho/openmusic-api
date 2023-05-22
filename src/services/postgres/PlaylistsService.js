@@ -5,7 +5,7 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
 
 class PlaylistsService {
-  constructor() {
+  constructor(collaborationsService) {
     /**
      * @type {Pool}
      */
@@ -14,6 +14,8 @@ class PlaylistsService {
      * @type {string}
      */
     this._tableName = 'playlists';
+
+    this._collaborationsService = collaborationsService;
   }
 
   /**
@@ -39,14 +41,16 @@ class PlaylistsService {
   }
 
   /**
-   * Get all user playlists.
+   * Get all user playlists, include collaboration playlists.
    * @param {string} userId The user id.
    * @returns {Promise<object[]>} The songs.
    */
   async getPlaylists(userId) {
     const result = await this._pool.query({
       text: `SELECT playlists.id, playlists.name, users.username FROM ${this._tableName}
-        INNER JOIN users ON users.id = playlists.owner WHERE playlists.owner = $1`,
+        INNER JOIN users ON users.id = playlists.owner
+        LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id
+        WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
       values: [userId],
     });
 
@@ -156,6 +160,28 @@ class PlaylistsService {
 
     if (result.rows[0].owner !== userId) {
       throw new AuthorizationError('You are not eligible to access this resource');
+    }
+  }
+
+  /**
+   * Verify if user has access to the playlist.
+   * @param {string} playlistId The playlist id.
+   * @param {string} userId The id of user who is trying to access the playlist.
+   * @throws {NotFoundError} if playlist not found.
+   * @throws {AuthorizationError} if user is not the playlist's owner or collaborator.
+   */
+  async verifyPlaylistAccess(playlistId, userId) {
+    try {
+      await this.verifyPlaylistOwner(playlistId, userId);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+      try {
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+      } catch {
+        throw error;
+      }
     }
   }
 }

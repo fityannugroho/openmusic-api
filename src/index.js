@@ -62,8 +62,8 @@ const init = async () => {
   const albumsService = new AlbumsService(songsService);
   const usersService = new UsersService();
   const authService = new AuthService();
-  const playlistsService = new PlaylistsService();
   const collaborationsService = new CollaborationsService();
+  const playlistsService = new PlaylistsService(collaborationsService);
 
   // Register the plugins
   await server.register([
