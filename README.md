@@ -9,6 +9,7 @@ API that store free-music playlist to everybody.
   - [Album](#album)
   - [Song](#song)
   - [Playlist](#playlist)
+  - [Collaboration](#collaboration)
   - [Data Relations](#data-relations)
 - [API Endpoint](#api-endpoint)
   - [User](#user-1)
@@ -35,6 +36,9 @@ API that store free-music playlist to everybody.
     - [4. Add a song to playlist](#4-add-a-song-to-playlist)
     - [5. Get songs from playlist](#5-get-songs-from-playlist)
     - [6. Remove a song from playlist](#6-remove-a-song-from-playlist)
+  - [Collaboration](#collaboration-1)
+    - [1. Add a collaborator](#1-add-a-collaborator)
+    - [2. Remove a collaborator](#2-remove-a-collaborator)
 
 ## Data
 
@@ -135,6 +139,18 @@ This is an example of the playlist:
   "id": "playlist-Xm0SsnNJDP4p56kt",
   "name": "Viva la Vida",
   "owner": "user-RpSB2ThuGNLvYkdx"
+}
+```
+
+### Collaboration
+
+The collaboration has the following attributes:
+
+```json
+{
+  "id": "string",
+  "playlistId": "string",
+  "userId": "string"
 }
 ```
 
@@ -1057,6 +1073,126 @@ Use this endpoint to remove a song from playlist.
               {
                 "status": "fail",
                 "message": "Playlist not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+### Collaboration
+
+Manage who can see and modify the songs in your playlist.
+
+#### 1. Add a collaborator
+
+Use this endpoint to add a collaborator to a playlist. The collaborator must be a valid user.
+
+```raml
+/collaborations:
+  post:
+    description: Add a collaborator to a playlist.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "playlistId": "playlist-8b8b8b8b8b8b8b8b",
+              "userId": "user-8b8b8b8b8b8b8b8b"
+            }
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Collaborator successfully added to playlist."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Unauthorized"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Playlist or user not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 2. Remove a collaborator
+
+```raml
+/collaborations:
+  delete:
+    description: Remove a collaborator from a playlist.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "playlistId": "playlist-8b8b8b8b8b8b8b8b",
+              "userId": "user-8b8b8b8b8b8b8b8b"
+            }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Collaborator successfully deleted from playlist."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Unauthorized"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Playlist or user not found."
               }
       500:
         body:
