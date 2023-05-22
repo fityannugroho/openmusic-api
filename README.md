@@ -38,7 +38,7 @@ API that store free-music playlist to everybody.
     - [6. Remove a song from playlist](#6-remove-a-song-from-playlist)
   - [Collaboration](#collaboration-1)
     - [1. Add a collaborator](#1-add-a-collaborator)
-    - [2. Delete collaborators](#2-delete-collaborators)
+    - [2. Remove a collaborator](#2-remove-a-collaborator)
 
 ## Data
 
@@ -1147,12 +1147,12 @@ Use this endpoint to add a collaborator to a playlist. The collaborator must be 
               }
 ```
 
-#### 2. Delete collaborators
+#### 2. Remove a collaborator
 
 ```raml
 /collaborations:
   delete:
-    description: Delete a collaborator from a playlist.
+    description: Remove a collaborator from a playlist.
     request:
       body:
         application/json:
