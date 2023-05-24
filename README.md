@@ -165,7 +165,7 @@ The collaboration has the following attributes:
 
 The following is the relations between the data:
 
-![ERD](https://dicoding-web-img.sgp1.cdn.digitaloceanspaces.com/original/academy/dos:3e4c9267e6548046c5d7b1289690b15920220921225650.jpeg)
+![ERD](https://dicoding-web-img.sgp1.cdn.digitaloceanspaces.com/original/academy/dos:9b2960258256c7e32af3cfb476864ff520220921232631.jpeg)
 
 ## API Endpoint
 
