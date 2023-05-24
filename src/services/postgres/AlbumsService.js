@@ -5,9 +5,10 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const { parseAlbumFromDB } = require('../../utils');
 
 class AlbumsService {
-  constructor(songsService) {
+  constructor(songsService, cacheService) {
     this._pool = new Pool();
     this._songsService = songsService;
+    this._cacheService = cacheService;
 
     /**
      * The table name.
@@ -148,6 +149,7 @@ class AlbumsService {
       throw new NotFoundError('Album not found');
     }
 
+    await this._cacheService.delete(`album-likes:${albumId}`);
     return result.rows[0].id;
   }
 
@@ -166,23 +168,31 @@ class AlbumsService {
     if (!result.rowCount) {
       throw new NotFoundError('Album not found');
     }
+
+    await this._cacheService.delete(`album-likes:${id}`);
   }
 
   /**
    * Get total likes of an album.
    * @param {string} id The album id.
-   * @returns {Promise<number>} The total likes.
+   * @returns {Promise<[number, boolean]>} The total likes and cache-from.
    * @throws {NotFoundError} if album not found.
    */
   async getAlbumLikes(id) {
     await this.getAlbumById(id);
 
-    const result = await this._pool.query({
-      text: 'SELECT id FROM album_likers WHERE album_id = $1',
-      values: [id],
-    });
+    try {
+      const result = await this._cacheService.get(`album-likes:${id}`);
+      return [parseInt(result, 10), true];
+    } catch (error) {
+      const result = await this._pool.query({
+        text: 'SELECT id FROM album_likers WHERE album_id = $1',
+        values: [id],
+      });
 
-    return result.rowCount;
+      await this._cacheService.set(`album-likes:${id}`, result.rowCount);
+      return [result.rowCount, false];
+    }
   }
 }
 

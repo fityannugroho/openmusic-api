@@ -30,6 +30,7 @@ const ExportsValidator = require('./validator/exports');
 const config = require('./utils/config');
 const LocalStorageService = require('./services/storage/local/LocalStorageService');
 const _files = require('./api/files');
+const CacheService = require('./services/redis/CacheService');
 
 const init = async () => {
   const server = Hapi.server({
@@ -69,13 +70,14 @@ const init = async () => {
     }),
   });
 
+  const cacheService = new CacheService();
   const storageService = new LocalStorageService(path.resolve(__dirname, 'storage'));
   const songsService = new SongsService();
-  const albumsService = new AlbumsService(songsService);
+  const albumsService = new AlbumsService(songsService, cacheService);
   const usersService = new UsersService();
   const authService = new AuthService();
-  const collaborationsService = new CollaborationsService();
-  const playlistsService = new PlaylistsService(collaborationsService);
+  const collaborationsService = new CollaborationsService(cacheService);
+  const playlistsService = new PlaylistsService(collaborationsService, cacheService);
 
   // Register the plugins
   await server.register([
