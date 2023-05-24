@@ -35,7 +35,7 @@ API that store free-music playlist to everybody.
     - [5. Delete a song](#5-delete-a-song)
   - [Playlist](#playlist-1)
     - [1. Add a playlist](#1-add-a-playlist)
-    - [2. Get playlist](#2-get-playlist)
+    - [2. Get playlists](#2-get-playlists)
     - [3. Delete a playlist](#3-delete-a-playlist)
     - [4. Add a song to playlist](#4-add-a-song-to-playlist)
     - [5. Get songs from playlist](#5-get-songs-from-playlist)
@@ -1017,14 +1017,14 @@ Use this endpoint to add a new playlist.
               }
 ```
 
-#### 2. Get playlist
+#### 2. Get playlists
 
-Use this endpoint to get playlists. The playlists that appear are only the ones he owns.
+Use this endpoint to get playlists. The playlists that appear are the ones that the user has access to (as the owner or the collaborator).
 
 ```raml
 /playlists:
   get:
-    description: Get all playlists.
+    description: Get all playlists that user own it or collaborates to it.
     responses:
       200:
         body:
