@@ -40,6 +40,8 @@ API that store free-music playlist to everybody.
   - [Collaboration](#collaboration-1)
     - [1. Add a collaborator](#1-add-a-collaborator)
     - [2. Remove a collaborator](#2-remove-a-collaborator)
+  - [Export](#export)
+    - [Export your playlist](#export-your-playlist)
 
 ## Data
 
@@ -1253,4 +1255,94 @@ Use this endpoint to add a collaborator to a playlist. The collaborator must be 
                 "status": "error",
                 "message": "Something went wrong in our server."
               }
+```
+
+### Export
+
+#### Export your playlist
+
+Use this endpoint to export your playlist to a file and will be send it to your email.
+
+Only playlist owner can export the playlist.
+
+```raml
+/export/playlists/{playlistId}:
+  post:
+    description: Export your playlist to a file and will be send it to your email.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "targetEmail": "your@email.com"
+            }
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Permintaan Anda sedang kami proses."
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Unauthorized"
+              }
+      403:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You are not the owner of this playlist."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Playlist not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+The exported data will be attached in the email as json file like this:
+
+```json
+{
+  "playlist": {
+    "id": "playlist-Mk8AnmCp210PwT6B",
+    "name": "My Favorite Coldplay Song",
+    "songs": [
+      {
+        "id": "song-Qbax5Oy7L8WKf74l",
+        "title": "Life in Technicolor",
+        "performer": "Coldplay"
+      },
+      {
+        "id": "song-poax5Oy7L8WKllqw",
+        "title": "Centimeteries of London",
+        "performer": "Coldplay"
+      },
+      {
+        "id": "song-Qalokam7L8WKf74l",
+        "title": "Lost!",
+        "performer": "Coldplay"
+      }
+    ]
+  }
+}
 ```
