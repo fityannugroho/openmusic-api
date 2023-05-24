@@ -1293,6 +1293,14 @@ Only playlist owner can export the playlist.
                 "status": "fail",
                 "message": "Unauthorized"
               }
+      403:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You are not the owner of this playlist."
+              }
       404:
         body:
           application/json:
