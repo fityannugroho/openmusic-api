@@ -5,4 +5,9 @@ const parseSongFromDB = ({ album_id, ...others }) => ({
   albumId: album_id,
 });
 
-module.exports = { parseSongFromDB };
+const parseAlbumFromDB = ({ cover_url, ...others }) => ({
+  ...others,
+  coverUrl: cover_url,
+});
+
+module.exports = { parseSongFromDB, parseAlbumFromDB };

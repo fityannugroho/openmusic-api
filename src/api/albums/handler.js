@@ -1,6 +1,7 @@
 class AlbumsHandler {
-  constructor(service, validator) {
+  constructor(service, storageService, validator) {
     this._service = service;
+    this._storageService = storageService;
     this._validator = validator;
 
     // Bind handlers to this class.
@@ -8,6 +9,7 @@ class AlbumsHandler {
     this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
     this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
     this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
+    this.postAlbumCoverHandler = this.postAlbumCoverHandler.bind(this);
   }
 
   async postAlbumHandler(request, h) {
@@ -53,6 +55,27 @@ class AlbumsHandler {
       status: 'success',
       message: 'Album successfully deleted.',
     });
+  }
+
+  async postAlbumCoverHandler(request, h) {
+    const { id } = request.params;
+    const { cover } = request.payload;
+
+    this._validator.validateAlbumCoverHeaders(cover.hapi.headers);
+
+    // Delete old cover if exists
+    const { coverUrl } = await this._service.getAlbumById(id);
+    if (coverUrl) {
+      await this._storageService.deleteFile(coverUrl);
+    }
+
+    const fileUrl = await this._storageService.writeFile(cover, cover.hapi);
+    await this._service.updateAlbumCover(id, fileUrl);
+
+    return h.response({
+      status: 'success',
+      message: 'Album cover successfully changed.',
+    }).code(201);
   }
 }
 
