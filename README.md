@@ -23,6 +23,10 @@ API that store free-music playlist to everybody.
     - [2. Get an album](#2-get-an-album)
     - [3. Edit an album](#3-edit-an-album)
     - [4. Delete an album](#4-delete-an-album)
+    - [5. Upload album cover](#5-upload-album-cover)
+    - [6. Like an album](#6-like-an-album)
+    - [7. Unlike an album](#7-unlike-an-album)
+    - [8. Get total likes of an album](#8-get-total-likes-of-an-album)
   - [Song](#song-1)
     - [1. Add a song](#1-add-a-song)
     - [2. Get songs](#2-get-songs)
@@ -31,7 +35,7 @@ API that store free-music playlist to everybody.
     - [5. Delete a song](#5-delete-a-song)
   - [Playlist](#playlist-1)
     - [1. Add a playlist](#1-add-a-playlist)
-    - [2. Get playlist](#2-get-playlist)
+    - [2. Get playlists](#2-get-playlists)
     - [3. Delete a playlist](#3-delete-a-playlist)
     - [4. Add a song to playlist](#4-add-a-song-to-playlist)
     - [5. Get songs from playlist](#5-get-songs-from-playlist)
@@ -40,6 +44,8 @@ API that store free-music playlist to everybody.
   - [Collaboration](#collaboration-1)
     - [1. Add a collaborator](#1-add-a-collaborator)
     - [2. Remove a collaborator](#2-remove-a-collaborator)
+  - [Export](#export)
+    - [Export your playlist](#export-your-playlist)
 
 ## Data
 
@@ -159,7 +165,7 @@ The collaboration has the following attributes:
 
 The following is the relations between the data:
 
-![ERD](https://dicoding-web-img.sgp1.cdn.digitaloceanspaces.com/original/academy/dos:3e4c9267e6548046c5d7b1289690b15920220921225650.jpeg)
+![ERD](https://dicoding-web-img.sgp1.cdn.digitaloceanspaces.com/original/academy/dos:9b2960258256c7e32af3cfb476864ff520220921232631.jpeg)
 
 ## API Endpoint
 
@@ -405,6 +411,8 @@ Use this endpoint to add a new album.
 
 Use this endpoint to get an album.
 
+> `coverUrl` will be `null` if album doesn't have any cover.
+
 ```raml
 /albums/{albumId}:
   get:
@@ -421,6 +429,7 @@ Use this endpoint to get an album.
                     "id": "album-Mk8AnmCp210PwT6B",
                     "name": "Viva la Vida",
                     "year": 2008,
+                    "coverUrl": "http://..."
                     "songs": [
                       {
                         "id": "song-Qbax5Oy7L8WKf74l",
@@ -520,6 +529,189 @@ Use this endpoint to delete an album.
               {
                 "status": "success",
                 "message": "Album successfully deleted."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 5. Upload album cover
+
+Use this endpoint to upload an album cover.
+
+Please note that the old cover will be replaced by new cover.
+
+```raml
+/albums/{albumId}/cover:
+  post:
+    description: Upload an album cover.
+    request:
+      body:
+        multipart/form-data:
+          example: |
+            {
+              "cover": "<file>"
+            }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Album cover successfully uploaded."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 6. Like an album
+
+Use this endpoint to like an album.
+
+```raml
+/albums/{albumId}/likes:
+  post:
+    description: Like an album.
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Album successfully liked."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You already liked this album."
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You must be logged in to like an album."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 7. Unlike an album
+
+Use this endpoint to unlike an album.
+
+```raml
+/albums/{albumId}/likes:
+  delete:
+    description: Unlike an album.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Album successfully unliked."
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You must be logged in to unlike an album."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 8. Get total likes of an album
+
+Use this endpoint to get total likes of an album.
+
+```raml
+/albums/{albumId}/likes:
+  get:
+    description: Get total likes of an album.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "data": {
+                  "likes": 100
+                }
               }
       404:
         body:
@@ -825,14 +1017,14 @@ Use this endpoint to add a new playlist.
               }
 ```
 
-#### 2. Get playlist
+#### 2. Get playlists
 
-Use this endpoint to get playlists. The playlists that appear are only the ones he owns.
+Use this endpoint to get playlists. The playlists that appear are the ones that the user has access to (as the owner or the collaborator).
 
 ```raml
 /playlists:
   get:
-    description: Get all playlists.
+    description: Get all playlists that user own it or collaborates to it.
     responses:
       200:
         body:
@@ -1253,4 +1445,94 @@ Use this endpoint to add a collaborator to a playlist. The collaborator must be 
                 "status": "error",
                 "message": "Something went wrong in our server."
               }
+```
+
+### Export
+
+#### Export your playlist
+
+Use this endpoint to export your playlist to a file and will be send it to your email.
+
+Only playlist owner can export the playlist.
+
+```raml
+/export/playlists/{playlistId}:
+  post:
+    description: Export your playlist to a file and will be send it to your email.
+    request:
+      body:
+        application/json:
+          example: |
+            {
+              "targetEmail": "your@email.com"
+            }
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Permintaan Anda sedang kami proses."
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Unauthorized"
+              }
+      403:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You are not the owner of this playlist."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Playlist not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+The exported data will be attached in the email as json file like this:
+
+```json
+{
+  "playlist": {
+    "id": "playlist-Mk8AnmCp210PwT6B",
+    "name": "My Favorite Coldplay Song",
+    "songs": [
+      {
+        "id": "song-Qbax5Oy7L8WKf74l",
+        "title": "Life in Technicolor",
+        "performer": "Coldplay"
+      },
+      {
+        "id": "song-poax5Oy7L8WKllqw",
+        "title": "Centimeteries of London",
+        "performer": "Coldplay"
+      },
+      {
+        "id": "song-Qalokam7L8WKf74l",
+        "title": "Lost!",
+        "performer": "Coldplay"
+      }
+    ]
+  }
+}
 ```

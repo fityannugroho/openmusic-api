@@ -10,7 +10,7 @@ class PlaylistsService {
     REMOVE: 'delete',
   });
 
-  constructor(collaborationsService) {
+  constructor(collaborationsService, cacheService) {
     /**
      * @type {Pool}
      */
@@ -21,6 +21,7 @@ class PlaylistsService {
     this._tableName = 'playlists';
 
     this._collaborationsService = collaborationsService;
+    this._cacheService = cacheService;
   }
 
   /**
@@ -42,6 +43,7 @@ class PlaylistsService {
       throw new InvariantError('Failed to add new playlist');
     }
 
+    await this._cacheService.delete(`myPlaylists:${owner}`);
     return id;
   }
 
@@ -51,15 +53,23 @@ class PlaylistsService {
    * @returns {Promise<object[]>} The songs.
    */
   async getPlaylists(userId) {
-    const result = await this._pool.query({
-      text: `SELECT playlists.id, playlists.name, users.username FROM ${this._tableName}
+    try {
+      // Get playlists from cache
+      const result = await this._cacheService.get(`myPlaylists:${userId}`);
+      return JSON.parse(result);
+    } catch (error) {
+      // Get playlists from database
+      const result = await this._pool.query({
+        text: `SELECT playlists.id, playlists.name, users.username FROM ${this._tableName}
         INNER JOIN users ON users.id = playlists.owner
         LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id
         WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
-      values: [userId],
-    });
+        values: [userId],
+      });
 
-    return result.rows;
+      await this._cacheService.set(`myPlaylists:${userId}`, JSON.stringify(result.rows));
+      return result.rows;
+    }
   }
 
   /**
@@ -84,13 +94,15 @@ class PlaylistsService {
    */
   async deletePlaylist(playlistId) {
     const result = await this._pool.query({
-      text: `DELETE FROM ${this._tableName} WHERE id = $1 RETURNING id`,
+      text: `DELETE FROM ${this._tableName} WHERE id = $1 RETURNING id, owner`,
       values: [playlistId],
     });
 
     if (!result.rowCount) {
       throw new NotFoundError('Playlist not found');
     }
+
+    await this._cacheService.delete(`myPlaylists:${result.rows[0].owner}`);
   }
 
   /**

@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const path = require('path');
+const inert = require('@hapi/inert');
 const albums = require('./api/albums');
 const songs = require('./api/songs');
 const ClientError = require('./exceptions/ClientError');
@@ -22,11 +24,18 @@ const PlaylistsValidator = require('./validator/playlists');
 const collaborations = require('./api/collaborations');
 const CollaborationsService = require('./services/postgres/CollaborationsService');
 const CollaborationsValidator = require('./validator/collaborations');
+const _exports = require('./api/exports');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const ExportsValidator = require('./validator/exports');
+const config = require('./utils/config');
+const LocalStorageService = require('./services/storage/local/LocalStorageService');
+const _files = require('./api/files');
+const CacheService = require('./services/redis/CacheService');
 
 const init = async () => {
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+    host: config.app.host,
+    port: config.app.port,
     routes: {
       cors: {
         origin: ['*'],
@@ -39,16 +48,19 @@ const init = async () => {
     {
       plugin: Jwt,
     },
+    {
+      plugin: inert,
+    },
   ]);
 
   // Define jwt authentication strategy.
   server.auth.strategy('openmusic_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.jwt.accessTokenKey,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: config.jwt.accessTokenAge,
     },
     validate: (artifacts) => ({
       isValid: true,
@@ -58,12 +70,14 @@ const init = async () => {
     }),
   });
 
+  const cacheService = new CacheService();
+  const storageService = new LocalStorageService(path.resolve(__dirname, 'storage'));
   const songsService = new SongsService();
-  const albumsService = new AlbumsService(songsService);
+  const albumsService = new AlbumsService(songsService, cacheService);
   const usersService = new UsersService();
   const authService = new AuthService();
-  const collaborationsService = new CollaborationsService();
-  const playlistsService = new PlaylistsService(collaborationsService);
+  const collaborationsService = new CollaborationsService(cacheService);
+  const playlistsService = new PlaylistsService(collaborationsService, cacheService);
 
   // Register the plugins
   await server.register([
@@ -72,6 +86,7 @@ const init = async () => {
       plugin: albums,
       options: {
         service: albumsService,
+        storageService,
         validator: AlbumsValidator,
       },
     },
@@ -119,6 +134,19 @@ const init = async () => {
         usersService,
         validator: CollaborationsValidator,
       },
+    },
+    // Exports plugin
+    {
+      plugin: _exports,
+      options: {
+        producerService: ProducerService,
+        playlistsService,
+        validator: ExportsValidator,
+      },
+    },
+    // Files plugin
+    {
+      plugin: _files,
     },
   ]);
 
