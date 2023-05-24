@@ -23,6 +23,7 @@ API that store free-music playlist to everybody.
     - [2. Get an album](#2-get-an-album)
     - [3. Edit an album](#3-edit-an-album)
     - [4. Delete an album](#4-delete-an-album)
+    - [5. Upload album cover](#5-upload-album-cover)
   - [Song](#song-1)
     - [1. Add a song](#1-add-a-song)
     - [2. Get songs](#2-get-songs)
@@ -407,6 +408,8 @@ Use this endpoint to add a new album.
 
 Use this endpoint to get an album.
 
+> `coverUrl` will be `null` if album doesn't have any cover.
+
 ```raml
 /albums/{albumId}:
   get:
@@ -423,6 +426,7 @@ Use this endpoint to get an album.
                     "id": "album-Mk8AnmCp210PwT6B",
                     "name": "Viva la Vida",
                     "year": 2008,
+                    "coverUrl": "http://..."
                     "songs": [
                       {
                         "id": "song-Qbax5Oy7L8WKf74l",
@@ -522,6 +526,58 @@ Use this endpoint to delete an album.
               {
                 "status": "success",
                 "message": "Album successfully deleted."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 5. Upload album cover
+
+Use this endpoint to upload an album cover.
+
+Please note that the old cover will be replaced by new cover.
+
+```raml
+/albums/{albumId}/cover:
+  post:
+    description: Upload an album cover.
+    request:
+      body:
+        multipart/form-data:
+          example: |
+            {
+              "cover": "<file>"
+            }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Album cover successfully uploaded."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "<invalid validation message>"
               }
       404:
         body:

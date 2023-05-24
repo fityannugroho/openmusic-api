@@ -2,6 +2,7 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const { parseAlbumFromDB } = require('../../utils');
 
 class AlbumsService {
   constructor(songsService) {
@@ -51,7 +52,7 @@ class AlbumsService {
       throw new NotFoundError('Album not found.');
     }
 
-    const album = result.rows[0];
+    const album = parseAlbumFromDB(result.rows[0]);
     const songs = await this._songsService.getSongsByAlbumId(id);
 
     return { ...album, songs };
@@ -88,6 +89,25 @@ class AlbumsService {
     if (!result.rowCount) {
       throw new NotFoundError('Album not found.');
     }
+  }
+
+  /**
+   * Update album cover.
+   * @param {string} id The album's id.
+   * @param {string} newCoverUrl The new cover url.
+   * @throws {NotFoundError} if album not found.
+   */
+  async updateAlbumCover(id, newCoverUrl) {
+    const result = await this._pool.query({
+      text: `UPDATE ${this._tableName} SET cover_url = $1 WHERE id = $2 RETURNING id`,
+      values: [newCoverUrl, id],
+    });
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Album not found.');
+    }
+
+    return result.rows[0].id;
   }
 }
 
