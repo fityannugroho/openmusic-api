@@ -709,11 +709,9 @@ Use this endpoint to get total likes of an album.
             example: |
               {
                 "status": "success",
-                "data": [
-                  {
-                    "likes": 100
-                  }
-                ]
+                "data": {
+                  "likes": 100
+                }
               }
       404:
         body:
