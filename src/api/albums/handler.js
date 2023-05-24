@@ -54,6 +54,13 @@ class AlbumsHandler {
 
   async deleteAlbumByIdHandler(request, h) {
     const { id } = request.params;
+
+    // Delete album cover if exist
+    const { coverUrl } = await this._service.getAlbumById(id);
+    if (coverUrl) {
+      await this._storageService.deleteFile(coverUrl);
+    }
+
     await this._service.deleteAlbumById(id);
 
     return h.response({
