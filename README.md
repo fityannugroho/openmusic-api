@@ -24,6 +24,9 @@ API that store free-music playlist to everybody.
     - [3. Edit an album](#3-edit-an-album)
     - [4. Delete an album](#4-delete-an-album)
     - [5. Upload album cover](#5-upload-album-cover)
+    - [6. Like an album](#6-like-an-album)
+    - [7. Unlike an album](#7-unlike-an-album)
+    - [8. Get total likes of an album](#8-get-total-likes-of-an-album)
   - [Song](#song-1)
     - [1. Add a song](#1-add-a-song)
     - [2. Get songs](#2-get-songs)
@@ -578,6 +581,137 @@ Please note that the old cover will be replaced by new cover.
               {
                 "status": "fail",
                 "message": "<invalid validation message>"
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 6. Like an album
+
+Use this endpoint to like an album.
+
+```raml
+/albums/{albumId}/likes:
+  post:
+    description: Like an album.
+    responses:
+      201:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Album successfully liked."
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You already liked this album."
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You must be logged in to like an album."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 7. Unlike an album
+
+Use this endpoint to unlike an album.
+
+```raml
+/albums/{albumId}/likes:
+  delete:
+    description: Unlike an album.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "message": "Album successfully unliked."
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "You must be logged in to unlike an album."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "fail",
+                "message": "Album not found."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "error",
+                "message": "Something went wrong in our server."
+              }
+```
+
+#### 8. Get total likes of an album
+
+Use this endpoint to get total likes of an album.
+
+```raml
+/albums/{albumId}/likes:
+  get:
+    description: Get total likes of an album.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "status": "success",
+                "data": {
+                  "likes": 100
+                }
               }
       404:
         body:

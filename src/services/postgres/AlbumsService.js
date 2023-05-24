@@ -109,6 +109,81 @@ class AlbumsService {
 
     return result.rows[0].id;
   }
+
+  /**
+   * Check if an album is liked by a user.
+   * @param {string} id The album id.
+   * @param {string} userId The autheticated user id.
+   * @returns {boolean} true if liked.
+   * @throws {NotFoundError} if album not found.
+   */
+  async isAlbumLiked(id, userId) {
+    await this.getAlbumById(id);
+
+    const result = await this._pool.query({
+      text: 'SELECT id FROM album_likers WHERE album_id = $1 AND user_id = $2',
+      values: [id, userId],
+    });
+
+    return !!result.rowCount;
+  }
+
+  /**
+   * Like an album.
+   * @param {string} id The album id.
+   * @param {string} userId The autheticated user id.
+   * @returns The relation id.
+   * @throws {NotFoundError} if album not found.
+   */
+  async likeAlbum(albumId, userId) {
+    const id = `album-likers-${nanoid(16)}`;
+
+    const result = await this._pool.query({
+      text: `INSERT INTO album_likers (id, album_id, user_id)
+        VALUES ($1, $2, $3) RETURNING id`,
+      values: [id, albumId, userId],
+    });
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Album not found');
+    }
+
+    return result.rows[0].id;
+  }
+
+  /**
+   * Unlike an album.
+   * @param {string} id The album id.
+   * @param {string} userId The autheticated user id.
+   * @throws {NotFoundError} if album not found.
+   */
+  async unlikeAlbum(id, userId) {
+    const result = await this._pool.query({
+      text: 'DELETE FROM album_likers WHERE album_id = $1 AND user_id = $2 RETURNING id',
+      values: [id, userId],
+    });
+
+    if (!result.rowCount) {
+      throw new NotFoundError('Album not found');
+    }
+  }
+
+  /**
+   * Get total likes of an album.
+   * @param {string} id The album id.
+   * @returns {Promise<number>} The total likes.
+   * @throws {NotFoundError} if album not found.
+   */
+  async getAlbumLikes(id) {
+    await this.getAlbumById(id);
+
+    const result = await this._pool.query({
+      text: 'SELECT id FROM album_likers WHERE album_id = $1',
+      values: [id],
+    });
+
+    return result.rowCount;
+  }
 }
 
 module.exports = AlbumsService;

@@ -1,3 +1,5 @@
+const InvariantError = require('../../exceptions/InvariantError');
+
 class AlbumsHandler {
   constructor(service, storageService, validator) {
     this._service = service;
@@ -10,6 +12,9 @@ class AlbumsHandler {
     this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
     this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
     this.postAlbumCoverHandler = this.postAlbumCoverHandler.bind(this);
+    this.postLikeAlbumHandler = this.postLikeAlbumHandler.bind(this);
+    this.deleteLikeAlbumHandler = this.deleteLikeAlbumHandler.bind(this);
+    this.getAlbumLikesHandler = this.getAlbumLikesHandler.bind(this);
   }
 
   async postAlbumHandler(request, h) {
@@ -76,6 +81,48 @@ class AlbumsHandler {
       status: 'success',
       message: 'Album cover successfully changed.',
     }).code(201);
+  }
+
+  async postLikeAlbumHandler(request, h) {
+    const { id } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    if (await this._service.isAlbumLiked(id, credentialId)) {
+      throw new InvariantError('You have liked this album before');
+    }
+
+    await this._service.likeAlbum(id, credentialId);
+
+    return h.response({
+      status: 'success',
+      message: 'Album successfully liked.',
+    }).code(201);
+  }
+
+  async deleteLikeAlbumHandler(request, h) {
+    const { id } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    if (!(await this._service.isAlbumLiked(id, credentialId))) {
+      throw new InvariantError('You have not liked this album before');
+    }
+
+    await this._service.unlikeAlbum(id, credentialId);
+
+    return h.response({
+      status: 'success',
+      message: 'Album successfully unliked.',
+    });
+  }
+
+  async getAlbumLikesHandler(request, h) {
+    const { id } = request.params;
+    const likes = await this._service.getAlbumLikes(id);
+
+    return h.response({
+      status: 'success',
+      data: { likes },
+    });
   }
 }
 
